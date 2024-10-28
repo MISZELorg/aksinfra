@@ -49,3 +49,8 @@ variable "hub_state_key" {
   description = "Hub VNET statefile name."
   type        = string
 }
+
+variable "hub_subscription_id" {
+  description = "Hub VNET subscription ID."
+  type        = string
+}
