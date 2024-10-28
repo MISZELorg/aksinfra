@@ -25,27 +25,27 @@ variable "spoke_vnet_cidr" {
   type        = list(string)
 }
 
-variable "hub_sub_id" {
+variable "hub_state_sub_id" {
   description = "Hub VNET subscription ID"
   type        = string
 }
 
-variable "hub_rg_name" {
+variable "hub_state_rg_name" {
   description = "Hub VNET resource group name."
   type        = string
 }
 
-variable "state_sa_name" {
+variable "hub_state_sa_name" {
   description = "Hub VNET statefile storage account name."
   type        = string
 }
 
-variable "container_name" {
+variable "hub_state_container_name" {
   description = "Hub VNET statefile container name."
   type        = string
 }
 
-variable "key" {
+variable "hub_state_key" {
   description = "Hub VNET statefile name."
   type        = string
 }
