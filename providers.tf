@@ -19,18 +19,18 @@ terraform {
 
 provider "azurerm" {
   features {}
-  # use_oidc = true
+  use_oidc = true
 }
 
 provider "azurerm" {
   alias = "spoke"
   features {}
-  # use_oidc = true
+  use_oidc = true
 }
 
 provider "azurerm" {
   alias = "hub"
   features {}
-  # use_oidc        = true
-  subscription_id = "1c7e8402-ac8b-48d9-a8c8-f3de95064482"
+  use_oidc        = true
+  subscription_id = var.hub_sub_id
 }

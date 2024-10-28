@@ -7,5 +7,6 @@ data "terraform_remote_state" "hub-vnet_tfstate" {
     subscription_id      = var.hub_sub_id
     resource_group_name  = var.hub_rg_name
     key                  = var.key
+    use_oidc             = true
   }
 }
