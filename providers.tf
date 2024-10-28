@@ -19,18 +19,18 @@ terraform {
 
 provider "azurerm" {
   features {}
-  resource_provider_registrations = "Microsoft.Authorization"
+  use_oidc = true
 }
 
 provider "azurerm" {
   alias = "spoke"
   features {}
-  resource_provider_registrations = "Microsoft.Authorization"
+  use_oidc = true
 }
 
 provider "azurerm" {
   alias = "hub"
   features {}
-  subscription_id                 = "1c7e8402-ac8b-48d9-a8c8-f3de95064482"
-  resource_provider_registrations = "Microsoft.Authorization"
+  use_oidc        = true
+  subscription_id = "1c7e8402-ac8b-48d9-a8c8-f3de95064482"
 }
