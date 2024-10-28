@@ -19,18 +19,30 @@ terraform {
 
 provider "azurerm" {
   features {}
-  use_oidc = true
+  resource_provider_registrations = [
+    "Microsoft.Network",
+    "Microsoft.Compute",
+    "Microsoft.Storage"
+  ]
 }
 
 provider "azurerm" {
   alias = "spoke"
   features {}
-  use_oidc = true
+  resource_provider_registrations = [
+    "Microsoft.Network",
+    "Microsoft.Compute",
+    "Microsoft.Storage"
+  ]
 }
 
 provider "azurerm" {
   alias = "hub"
   features {}
-  use_oidc        = true
+  resource_provider_registrations = [
+    "Microsoft.Network",
+    "Microsoft.Compute",
+    "Microsoft.Storage"
+  ]
   subscription_id = var.hub_sub_id
 }
