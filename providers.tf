@@ -11,8 +11,8 @@ terraform {
     storage_account_name = "aztfsandbox63"
     container_name       = "terraform"
     key                  = "tfstate"
+    subscription_id      = "2745b794-365d-4993-9eec-fe3f9879434b"
     use_oidc             = true
-    subscription_id      = var.hub_state_sub_id
   }
 }
 
