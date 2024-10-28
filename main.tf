@@ -1,11 +1,11 @@
-module "spoke_networking" {
-  source          = "./modules/spoke_networking"
-  spoke_prefix    = var.spoke_prefix
-  location        = var.location
-  spoke_tags      = var.spoke_tags
-  spoke_vnet_cidr = var.spoke_vnet_cidr
-  subnets         = var.subnets
-}
+# module "spoke_networking" {
+#   source          = "./modules/spoke_networking"
+#   spoke_prefix    = var.spoke_prefix
+#   location        = var.location
+#   spoke_tags      = var.spoke_tags
+#   spoke_vnet_cidr = var.spoke_vnet_cidr
+#   subnets         = var.subnets
+# }
 
 # module "peering" {
 #   source = "./modules/peering"
