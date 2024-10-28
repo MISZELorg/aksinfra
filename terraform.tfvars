@@ -17,6 +17,6 @@ spoke_tags = {
 
 state_sa_name  = "aztfconnectivity63"
 container_name = "terraform"
-hub_sub_id     = "2745b794-365d-4993-9eec-fe3f9879434b"
+hub_sub_id     = "1c7e8402-ac8b-48d9-a8c8-f3de95064482"
 hub_rg_name    = "aztf-backend-rg"
 key            = "tfstate"
