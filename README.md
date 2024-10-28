@@ -1,2 +1,0 @@
-# aksinfra
-Private AKS 
