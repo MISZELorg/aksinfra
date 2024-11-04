@@ -270,14 +270,14 @@ module "aks" {
   prefix                 = "${var.aks_appname}-${each.value.name_prefix}"
   vnet_subnet_id         = module.spoke_networking.subnet_ids["akssubnet"]
   mi_aks_cp_id           = module.uami_aks_cp[each.value.name_prefix].id
-  #   la_id                  = module.laws.log_analytics_workspace_id
-  gateway_name        = module.appgw[each.key].gateway_name
-  gateway_id          = module.appgw[each.key].gateway_id
-  private_dns_zone_id = module.aks_dns_zone.dns_zone_id
-  network_plugin      = try(var.network_plugin, "azure")
-  pod_cidr            = try(var.pod_cidr, null)
-  k8s_version         = each.value.k8s_version
-  tags                = var.spoke_tags
+  la_id                  = azurerm_log_analytics_workspace.laws.id
+  gateway_name           = module.appgw[each.key].gateway_name
+  gateway_id             = module.appgw[each.key].gateway_id
+  private_dns_zone_id    = module.aks_dns_zone.dns_zone_id
+  network_plugin         = try(var.network_plugin, "azure")
+  pod_cidr               = try(var.pod_cidr, null)
+  k8s_version            = each.value.k8s_version
+  tags                   = var.spoke_tags
 
   depends_on = [
     module.role_assignment_aks-to-vnet,
