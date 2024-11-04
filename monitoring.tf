@@ -134,6 +134,29 @@ resource "azurerm_monitor_data_collection_rule" "aks_cidcr" {
   }
 }
 
+resource "azurerm_role_assignment" "aks_readerrole" {
+  scope              = azurerm_monitor_workspace.aks_amw.id
+  role_definition_id = "/subscriptions/${data.azurerm_client_config.current.subscription_id}/providers/Microsoft.Authorization/roleDefinitions/b0d8363b-8ddd-447d-831f-62ca05bff136"
+  principal_id       = azurerm_dashboard_grafana.aks_grafana.identity.0.principal_id
+  depends_on = [
+    azurerm_monitor_workspace.aks_amw,
+    azurerm_dashboard_grafana.aks_grafana
+  ]
+}
+
+module "eid_role_assignment-grafanaviewers" {
+  source = "./modules/EID_role_assignment"
+
+  role_definition_name = "Grafana Viewer"
+  scope                = azurerm_dashboard_grafana.aks_grafana.id
+  eid_group_ids = [
+    module.aks_eid_groups.aksadmins_object_id
+  ]
+  depends_on = [
+    azurerm_dashboard_grafana.aks_grafana
+  ]
+}
+
 # resource "azurerm_monitor_data_collection_rule_association" "aks_amwdcra" {
 #   for_each             = { for k, v in module.aks : k => v }
 #   name                    = "MSProm-${azurerm_resource_group.aks-monitoring_rg.location}-${var.aks_appname}"
