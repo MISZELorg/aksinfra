@@ -166,8 +166,8 @@ module "aks-monitoring" {
   amw_name            = "${var.aks_appname}-amw"
   grafana_name        = "${var.aks_appname}-grafana"
   dce_name            = "${var.aks_appname}-dce"
-  prometheus_dcr_name = "MSProm-${azurerm_resource_group.monitoring_rg.location}-${var.aks_appname}"
-  ci_dcr_name         = "MSCI-${azurerm_resource_group.monitoring_rg.location}-${var.aks_appname}"
+  prometheus_dcr_name = "MSProm-${module.aks-monitoring.location}-${var.aks_appname}"
+  ci_dcr_name         = "MSCI-${module.aks-monitoring.location}-${var.aks_appname}"
   workspace_id        = module.laws.log_analytics_workspace_id
 
   depends_on = [
