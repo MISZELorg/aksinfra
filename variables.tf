@@ -54,3 +54,32 @@ variable "hub_subscription_id" {
   description = "Hub VNET subscription ID."
   type        = string
 }
+
+variable "aks_appname" {
+  description = "AKS workload name."
+  type        = string
+}
+
+# The Public Domain for the public dns zone, that is used to register the hostnames assigned to the workloads hosted in AKS; if empty the dns zone not provisioned.
+variable "public_domain" {
+  description = "The Public Domain for the public dns zone, that is used to register the hostnames assigned to the workloads hosted in AKS; if empty the dns zone not provisioned."
+  default     = ""
+}
+
+variable "aks_admins_group" {
+  description = "AKS Admins EntraID group name."
+  type        = string
+}
+
+variable "aks_users_group" {
+  description = "AKS Users EntraID group name."
+  type        = string
+}
+
+variable "network_plugin" {
+  default = "azure"
+}
+
+variable "pod_cidr" {
+  default = null
+}
