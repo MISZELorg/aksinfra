@@ -1,18 +1,30 @@
-# resource "azurerm_resource_group" "monitoring_rg" {
-#   name     = "${var.aks_appname}-monitoring-rg"
-#   location = var.location
-#   tags     = var.spoke_tags
-# }
+resource "azurerm_resource_group" "monitoring_rg" {
+  name     = "${var.aks_appname}-monitoring-rg"
+  location = var.location
+  tags     = var.spoke_tags
+}
 
-# resource "azurerm_monitor_workspace" "aks_amw" {
-#   name                = "${var.aks_appname}-amw"
-#   resource_group_name = azurerm_resource_group.monitoring_rg.name
-#   location            = azurerm_resource_group.monitoring_rg.location
-#   tags                = var.spoke_tags
-#   depends_on = [ 
-#     azurerm_resource_group.monitoring_rg 
-#   ]
-# }
+resource "azurerm_log_analytics_workspace" "laws" {
+  name                = "${var.var.aks_appname}-laws"
+  resource_group_name = azurerm_resource_group.monitoring_rg.name
+  location            = azurerm_resource_group.monitoring_rg.location
+  sku                 = "PerGB2018"
+  retention_in_days   = 30
+  tags                = var.spoke_tags
+  depends_on = [
+    azurerm_resource_group.monitoring_rg
+  ]
+}
+
+resource "azurerm_monitor_workspace" "aks_amw" {
+  name                = "${var.aks_appname}-amw"
+  resource_group_name = azurerm_resource_group.monitoring_rg.name
+  location            = azurerm_resource_group.monitoring_rg.location
+  tags                = var.spoke_tags
+  depends_on = [
+    azurerm_resource_group.monitoring_rg
+  ]
+}
 
 # resource "azurerm_dashboard_grafana" "aks_grafana" {
 #   name                              = "${var.aks_appname}-grafana"
