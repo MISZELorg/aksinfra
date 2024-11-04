@@ -259,163 +259,163 @@ module "aad_pod_identity_access_policy" {
   secret_permissions = ["Get", "List"]
 }
 
-module "aks" {
-  source = "./modules/aks-private"
+# module "aks" {
+#   source = "./modules/aks-private"
 
-  for_each               = { for aks_clusters in local.aks_clusters : aks_clusters.name_prefix => aks_clusters if aks_clusters.aks_turn_on == true }
-  resource_group_name    = module.spoke_networking.spoke_rg_name
-  admin_group_object_ids = module.aks_eid_groups.aksadmins_object_id
-  maintenance_window     = var.maintenance_window
-  location               = module.spoke_networking.spoke_rg_location
-  prefix                 = "${var.aks_appname}-${each.value.name_prefix}"
-  vnet_subnet_id         = module.spoke_networking.subnet_ids["akssubnet"]
-  mi_aks_cp_id           = module.uami_aks_cp[each.value.name_prefix].id
-  la_id                  = azurerm_log_analytics_workspace.laws.id
-  gateway_name           = module.appgw[each.key].gateway_name
-  gateway_id             = module.appgw[each.key].gateway_id
-  private_dns_zone_id    = module.aks_dns_zone.dns_zone_id
-  network_plugin         = try(var.network_plugin, "azure")
-  pod_cidr               = try(var.pod_cidr, null)
-  k8s_version            = each.value.k8s_version
-  tags                   = var.spoke_tags
+#   for_each               = { for aks_clusters in local.aks_clusters : aks_clusters.name_prefix => aks_clusters if aks_clusters.aks_turn_on == true }
+#   resource_group_name    = module.spoke_networking.spoke_rg_name
+#   admin_group_object_ids = module.aks_eid_groups.aksadmins_object_id
+#   maintenance_window     = var.maintenance_window
+#   location               = module.spoke_networking.spoke_rg_location
+#   prefix                 = "${var.aks_appname}-${each.value.name_prefix}"
+#   vnet_subnet_id         = module.spoke_networking.subnet_ids["akssubnet"]
+#   mi_aks_cp_id           = module.uami_aks_cp[each.value.name_prefix].id
+#   la_id                  = azurerm_log_analytics_workspace.laws.id
+#   gateway_name           = module.appgw[each.key].gateway_name
+#   gateway_id             = module.appgw[each.key].gateway_id
+#   private_dns_zone_id    = module.aks_dns_zone.dns_zone_id
+#   network_plugin         = try(var.network_plugin, "azure")
+#   pod_cidr               = try(var.pod_cidr, null)
+#   k8s_version            = each.value.k8s_version
+#   tags                   = var.spoke_tags
 
-  depends_on = [
-    module.role_assignment_aks-to-vnet,
-    module.role_assignment_aks-to-dnszone
-  ]
-}
+#   depends_on = [
+#     module.role_assignment_aks-to-vnet,
+#     module.role_assignment_aks-to-dnszone
+#   ]
+# }
 
-# Route table to support AKS cluster with kubenet network plugin
+# # Route table to support AKS cluster with kubenet network plugin
 
-resource "azurerm_route_table" "rt" {
-  count                         = var.network_plugin == "kubenet" ? 1 : 0
-  name                          = "appgw-rt"
-  resource_group_name           = module.spoke_networking.spoke_rg_name
-  location                      = module.spoke_networking.spoke_rg_location
-  bgp_route_propagation_enabled = true
-  depends_on = [
-    module.aks
-  ]
-}
+# resource "azurerm_route_table" "rt" {
+#   count                         = var.network_plugin == "kubenet" ? 1 : 0
+#   name                          = "appgw-rt"
+#   resource_group_name           = module.spoke_networking.spoke_rg_name
+#   location                      = module.spoke_networking.spoke_rg_location
+#   bgp_route_propagation_enabled = true
+#   depends_on = [
+#     module.aks
+#   ]
+# }
 
-resource "azurerm_subnet_route_table_association" "rt_kubenet_association" {
-  count          = var.network_plugin == "kubenet" ? 1 : 0
-  subnet_id      = module.spoke_networking.subnet_ids["akssubnet"]
-  route_table_id = azurerm_route_table.rt[count.index].id
-  depends_on = [
-    azurerm_route_table.rt
-  ]
-}
+# resource "azurerm_subnet_route_table_association" "rt_kubenet_association" {
+#   count          = var.network_plugin == "kubenet" ? 1 : 0
+#   subnet_id      = module.spoke_networking.subnet_ids["akssubnet"]
+#   route_table_id = azurerm_route_table.rt[count.index].id
+#   depends_on = [
+#     azurerm_route_table.rt
+#   ]
+# }
 
-# # # These role assignments grant the EID groups access.
+# # # # These role assignments grant the EID groups access.
 
-# # The AKS cluster. 
+# # # The AKS cluster. 
+# # # Based on the instances of AKS Clusters deployed are defined the role assignments per each cluster, this is mainly used in the blue green deployment scenario.
+
+# module "eid_role_assignment-aks_users" {
+#   source = "./modules/EID_role_assignment"
+
+#   for_each             = { for k, v in module.aks : k => v }
+#   role_definition_name = "Azure Kubernetes Service Cluster User Role"
+#   scope                = each.value.aks_id
+#   eid_group_ids = [
+#     module.aks_eid_groups.aksusers_object_id
+#   ]
+# }
+
+# module "eid_role_assignment-aks_admins" {
+#   source = "./modules/EID_role_assignment"
+
+#   for_each             = { for k, v in module.aks : k => v }
+#   role_definition_name = "Azure Kubernetes Service RBAC Cluster Admin"
+#   scope                = each.value.aks_id
+#   eid_group_ids = [
+#     module.aks_eid_groups.aksadmins_object_id
+#   ]
+# }
+
+# module "eid_role_assignment-aks_rbac_admin" {
+#   source = "./modules/EID_role_assignment"
+
+#   for_each             = { for k, v in module.aks : k => v }
+#   role_definition_name = "Azure Kubernetes Service RBAC Cluster Admin"
+#   scope                = each.value.aks_id
+#   eid_group_ids = [
+#     data.azurerm_client_config.current.object_id
+#   ]
+# }
+
+# # # Role Assignment to Azure Container Registry from AKS Cluster
+# # # This must be granted after the cluster is created in order to use the kubelet identity.
+# # # Based on the instances of AKS Clusters deployed are defined the role assignments per each cluster, this is mainly used in the blue green deployment scenario.
+
+# module "role_assignment_aks-to-acr" {
+#   source = "./modules/role_assignment"
+
+#   for_each = module.aks
+#   user_assigned_identities = {
+#     (each.key) = {
+#       principal_id = each.value.kubelet_id
+#     }
+#   }
+#   scope                = module.acr.acr_id
+#   role_definition_name = "AcrPull"
+#   depends_on = [
+#     module.aks
+#   ]
+# }
+
+# # # Role Assignments for AGIC on AppGW
+# # # This must be granted after the cluster is created in order to use the ingress identity.
+# # # Based on the instances of AKS Clusters deployed are defined the role assignments per each cluster, this is mainly used in the blue green deployment scenario.
+
+# module "role_assignment_agic_appgw" {
+#   source = "./modules/role_assignment"
+
+#   for_each = module.aks
+#   user_assigned_identities = {
+#     (each.key) = {
+#       principal_id = each.value.agic_id
+#     }
+#   }
+#   scope                = each.value.appgw_id
+#   role_definition_name = "Contributor"
+#   depends_on = [
+#     module.aks
+#   ]
+# }
+
+# # Role assignments
 # # Based on the instances of AKS Clusters deployed are defined the role assignments per each cluster, this is mainly used in the blue green deployment scenario.
 
-module "eid_role_assignment-aks_users" {
-  source = "./modules/EID_role_assignment"
+# module "role_assignment_aks_identity_operator" {
+#   source = "./modules/role_assignment"
 
-  for_each             = { for k, v in module.aks : k => v }
-  role_definition_name = "Azure Kubernetes Service Cluster User Role"
-  scope                = each.value.aks_id
-  eid_group_ids = [
-    module.aks_eid_groups.aksusers_object_id
-  ]
-}
+#   for_each = module.aks
+#   user_assigned_identities = {
+#     (each.key) = {
+#       principal_id = each.value.kubelet_id
+#     }
+#   }
+#   scope                = module.uami_aks_pod.id
+#   role_definition_name = "Managed Identity Operator"
+#   depends_on = [
+#     module.aks
+#   ]
+# }
 
-module "eid_role_assignment-aks_admins" {
-  source = "./modules/EID_role_assignment"
+# module "role_assignment_aks_vm_contributor" {
+#   source = "./modules/role_assignment"
 
-  for_each             = { for k, v in module.aks : k => v }
-  role_definition_name = "Azure Kubernetes Service RBAC Cluster Admin"
-  scope                = each.value.aks_id
-  eid_group_ids = [
-    module.aks_eid_groups.aksadmins_object_id
-  ]
-}
-
-module "eid_role_assignment-aks_rbac_admin" {
-  source = "./modules/EID_role_assignment"
-
-  for_each             = { for k, v in module.aks : k => v }
-  role_definition_name = "Azure Kubernetes Service RBAC Cluster Admin"
-  scope                = each.value.aks_id
-  eid_group_ids = [
-    data.azurerm_client_config.current.object_id
-  ]
-}
-
-# # Role Assignment to Azure Container Registry from AKS Cluster
-# # This must be granted after the cluster is created in order to use the kubelet identity.
-# # Based on the instances of AKS Clusters deployed are defined the role assignments per each cluster, this is mainly used in the blue green deployment scenario.
-
-module "role_assignment_aks-to-acr" {
-  source = "./modules/role_assignment"
-
-  for_each = module.aks
-  user_assigned_identities = {
-    (each.key) = {
-      principal_id = each.value.kubelet_id
-    }
-  }
-  scope                = module.acr.acr_id
-  role_definition_name = "AcrPull"
-  depends_on = [
-    module.aks
-  ]
-}
-
-# # Role Assignments for AGIC on AppGW
-# # This must be granted after the cluster is created in order to use the ingress identity.
-# # Based on the instances of AKS Clusters deployed are defined the role assignments per each cluster, this is mainly used in the blue green deployment scenario.
-
-module "role_assignment_agic_appgw" {
-  source = "./modules/role_assignment"
-
-  for_each = module.aks
-  user_assigned_identities = {
-    (each.key) = {
-      principal_id = each.value.agic_id
-    }
-  }
-  scope                = each.value.appgw_id
-  role_definition_name = "Contributor"
-  depends_on = [
-    module.aks
-  ]
-}
-
-# Role assignments
-# Based on the instances of AKS Clusters deployed are defined the role assignments per each cluster, this is mainly used in the blue green deployment scenario.
-
-module "role_assignment_aks_identity_operator" {
-  source = "./modules/role_assignment"
-
-  for_each = module.aks
-  user_assigned_identities = {
-    (each.key) = {
-      principal_id = each.value.kubelet_id
-    }
-  }
-  scope                = module.uami_aks_pod.id
-  role_definition_name = "Managed Identity Operator"
-  depends_on = [
-    module.aks
-  ]
-}
-
-module "role_assignment_aks_vm_contributor" {
-  source = "./modules/role_assignment"
-
-  for_each = module.aks
-  user_assigned_identities = {
-    (each.key) = {
-      principal_id = each.value.kubelet_id
-    }
-  }
-  scope                = "/subscriptions/${data.azurerm_client_config.current.subscription_id}/resourceGroups/${each.value.node_pool_rg}"
-  role_definition_name = "Virtual Machine Contributor"
-  depends_on = [
-    module.aks
-  ]
-}
+#   for_each = module.aks
+#   user_assigned_identities = {
+#     (each.key) = {
+#       principal_id = each.value.kubelet_id
+#     }
+#   }
+#   scope                = "/subscriptions/${data.azurerm_client_config.current.subscription_id}/resourceGroups/${each.value.node_pool_rg}"
+#   role_definition_name = "Virtual Machine Contributor"
+#   depends_on = [
+#     module.aks
+#   ]
+# }
