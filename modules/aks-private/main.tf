@@ -55,13 +55,17 @@ resource "azurerm_kubernetes_cluster" "akscluster" {
   }
 
   default_node_pool {
-    name                 = "defaultpool"
-    vm_size              = "Standard_DS2_v2"
-    os_disk_size_gb      = 30
-    type                 = "VirtualMachineScaleSets"
-    node_count           = 3
-    vnet_subnet_id       = var.vnet_subnet_id
-    auto_scaling_enabled = true
+    name                        = "defaultpool"
+    temporary_name_for_rotation = "temppool"
+    vm_size                     = "Standard_DS2_v2"
+    os_disk_size_gb             = 30
+    type                        = "VirtualMachineScaleSets"
+    node_count                  = 2
+    min_count                   = 2
+    max_count                   = 3
+    max_pods                    = 30
+    vnet_subnet_id              = var.vnet_subnet_id
+    auto_scaling_enabled        = true
 
     upgrade_settings {
       drain_timeout_in_minutes      = 0
