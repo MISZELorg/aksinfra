@@ -51,6 +51,7 @@ resource "azurerm_monitor_data_collection_endpoint" "aks_dce" {
   resource_group_name = azurerm_resource_group.monitoring_rg.name
   location            = azurerm_resource_group.monitoring_rg.location
   kind                = "Linux"
+  tags                = var.spoke_tags
 }
 
 resource "azurerm_monitor_data_collection_rule" "aks_promdcr" {
@@ -157,24 +158,25 @@ module "eid_role_assignment-grafanaviewers" {
   ]
 }
 
-# resource "azurerm_monitor_data_collection_rule_association" "aks_amwdcra" {
-#   for_each             = { for k, v in module.aks : k => v }
-#   name                    = "MSProm-${azurerm_resource_group.aks-monitoring_rg.location}-${var.aks_appname}"
-#   target_resource_id      = each.value.aks_id
-#   data_collection_rule_id = azurerm_monitor_data_collection_rule.aks_promdcr.id
-#   depends_on = [
-#     azurerm_monitor_data_collection_rule.aks_promdcr,
-#     azurerm_kubernetes_cluster.aks_cluster
-#   ]
-# }
+resource "azurerm_monitor_data_collection_rule_association" "aks_amwdcra" {
+  for_each                = { for k, v in module.aks : k => v }
+  name                    = "MSProm-${azurerm_resource_group.monitoring_rg.location}-${var.aks_appname}"
+  target_resource_id      = each.value.aks_id
+  data_collection_rule_id = azurerm_monitor_data_collection_rule.aks_promdcr.id
+  depends_on = [
+    azurerm_monitor_data_collection_rule.aks_promdcr,
+    azurerm_kubernetes_cluster.aks_cluster
+  ]
+}
 
-# resource "azurerm_monitor_data_collection_rule_association" "aks_cidcra" {
-#   for_each             = { for k, v in module.aks : k => v }
-#   name                    = "ContainerInsightsExtension"
-#   target_resource_id      = each.value.aks_id
-#   data_collection_rule_id = azurerm_monitor_data_collection_rule.aks_cidcr.id
-#   depends_on = [
-#     azurerm_monitor_data_collection_rule.aks_cidcr
-#   ]
+resource "azurerm_monitor_data_collection_rule_association" "aks_cidcra" {
+  for_each = { for k, v in module.aks : k => v }
+  #   name                    = "ContainerInsightsExtension"
+  name                    = "MSCi-${azurerm_resource_group.monitoring_rg.location}-${var.aks_appname}"
+  target_resource_id      = each.value.aks_id
+  data_collection_rule_id = azurerm_monitor_data_collection_rule.aks_cidcr.id
+  depends_on = [
+    azurerm_monitor_data_collection_rule.aks_cidcr
+  ]
 
-# }
+}
