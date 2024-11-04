@@ -18,6 +18,11 @@ output "location" {
   value       = azurerm_resource_group.monitoring_rg.location
 }
 
+output "rg_name" {
+  description = "Monitoring RG location"
+  value       = azurerm_resource_group.monitoring_rg.name
+}
+
 output "promdcr_id" {
   description = "xxx"
   value       = azurerm_monitor_data_collection_rule.aks_promdcr.id
