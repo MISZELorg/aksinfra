@@ -1,16 +1,16 @@
 # resource "azurerm_monitor_alert_prometheus_rule_group" "node_recording_rules_rule_group" {
-#   name                = "NodeRecordingRulesRuleGroup-${var.cluster_name}"
-#   location            = azurerm_resource_group.aks-monitoring_rg.location
-#   resource_group_name = azurerm_resource_group.aks-monitoring_rg.name
-#   scopes              = [azurerm_monitor_workspace.aks_amw.id, azurerm_kubernetes_cluster.aks_cluster.id]
-#   cluster_name        = var.cluster_name
+#   name                = "NodeRecordingRulesRuleGroup-${var.aks_appname}"
+#   resource_group_name = azurerm_resource_group.monitoring_rg.name
+#   location            = azurerm_resource_group.monitoring_rg.location
+#   scopes              = [azurerm_monitor_workspace.aks_amw.id, each.value.module.aks_id]
+#   cluster_name        = var.aks_appname
 #   description         = "Node Recording Rules Rule Group"
 #   rule_group_enabled  = true
 #   interval            = "PT1M"
-#   tags                = var.aks_tags
+#   tags                = var.spoke_tags
 #   depends_on = [
 #     azurerm_monitor_workspace.aks_amw,
-#     azurerm_kubernetes_cluster.aks_cluster
+#     module.aks
 #   ]
 
 #   rule {
@@ -94,15 +94,15 @@
 # }
 
 # resource "azurerm_monitor_alert_prometheus_rule_group" "kubernetes_recording_rules_rule_group" {
-#   name                = "KubernetesRecordingRulesRuleGroup-${var.cluster_name}"
+#   name                = "KubernetesRecordingRulesRuleGroup-${var.aks_appname}"
 #   location            = azurerm_resource_group.aks-monitoring_rg.location
 #   resource_group_name = azurerm_resource_group.aks-monitoring_rg.name
-#   scopes              = [azurerm_monitor_workspace.aks_amw.id, azurerm_kubernetes_cluster.aks_cluster.id]
-#   cluster_name        = var.cluster_name
+#   scopes              = [azurerm_monitor_workspace.aks_amw.id, each.value.module.aks_id]
+#   cluster_name        = var.aks_appname
 #   description         = "Kubernetes Recording Rules Rule Group"
 #   rule_group_enabled  = true
 #   interval            = "PT1M"
-#   tags                = var.aks_tags
+#   tags                = var.spoke_tags
 #   depends_on = [
 #     azurerm_monitor_workspace.aks_amw,
 #     azurerm_kubernetes_cluster.aks_cluster
@@ -256,15 +256,15 @@
 # }
 
 # resource "azurerm_monitor_alert_prometheus_rule_group" "node_and_kubernetes_recording_rules_rule_group_win" {
-#   name                = "NodeAndKubernetesRecordingRulesRuleGroup-Win-${var.cluster_name}"
+#   name                = "NodeAndKubernetesRecordingRulesRuleGroup-Win-${var.aks_appname}"
 #   location            = azurerm_resource_group.aks-monitoring_rg.location
 #   resource_group_name = azurerm_resource_group.aks-monitoring_rg.name
-#   scopes              = [azurerm_monitor_workspace.aks_amw.id, azurerm_kubernetes_cluster.aks_cluster.id]
-#   cluster_name        = var.cluster_name
+#   scopes              = [azurerm_monitor_workspace.aks_amw.id, each.value.module.aks_id]
+#   cluster_name        = var.aks_appname
 #   description         = "Node and Kubernetes Recording Rules Rule Group for Windows Nodes"
 #   rule_group_enabled  = true
 #   interval            = "PT1M"
-#   tags                = var.aks_tags
+#   tags                = var.spoke_tags
 #   depends_on = [
 #     azurerm_monitor_workspace.aks_amw,
 #     azurerm_kubernetes_cluster.aks_cluster
@@ -392,15 +392,15 @@
 # }
 
 # resource "azurerm_monitor_alert_prometheus_rule_group" "node_recording_rules_rule_group_win" {
-#   name                = "NodeRecordingRulesRuleGroup-Win-${var.cluster_name}"
+#   name                = "NodeRecordingRulesRuleGroup-Win-${var.aks_appname}"
 #   location            = azurerm_resource_group.aks-monitoring_rg.location
 #   resource_group_name = azurerm_resource_group.aks-monitoring_rg.name
-#   scopes              = [azurerm_monitor_workspace.aks_amw.id, azurerm_kubernetes_cluster.aks_cluster.id]
-#   cluster_name        = var.cluster_name
+#   scopes              = [azurerm_monitor_workspace.aks_amw.id, each.value.module.aks_id]
+#   cluster_name        = var.aks_appname
 #   description         = "Node and Kubernetes Recording Rules Rule Group for Windows Nodes"
 #   rule_group_enabled  = true
 #   interval            = "PT1M"
-#   tags                = var.aks_tags
+#   tags                = var.spoke_tags
 #   depends_on = [
 #     azurerm_monitor_workspace.aks_amw,
 #     azurerm_kubernetes_cluster.aks_cluster

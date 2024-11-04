@@ -88,3 +88,39 @@ variable "network_plugin" {
 variable "pod_cidr" {
   default = null
 }
+
+
+variable "streams" {
+  description = "List of log streams"
+  type        = list(string)
+}
+
+variable "syslog_facilities" {
+  description = "Syslog facilities"
+  type        = list(string)
+}
+
+variable "syslog_levels" {
+  description = "Syslog levels"
+  type        = list(string)
+}
+
+variable "data_collection_interval" {
+  description = "Interval for data collection"
+  type        = string
+}
+
+variable "namespace_filtering_mode_for_data_collection" {
+  description = "Namespace filtering mode for data collection"
+  type        = string
+}
+
+variable "namespaces_for_data_collection" {
+  description = "Namespaces for data collection"
+  type        = list(string)
+}
+
+variable "enableContainerLogV2" {
+  description = "Enable Container Log V2"
+  type        = bool
+}
