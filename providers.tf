@@ -23,6 +23,7 @@ provider "azurerm" {
 
 # Use if our SPN is allowed to create EID groups.
 provider "azuread" {
+  use_oidc = true
 }
 
 provider "azurerm" {

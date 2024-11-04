@@ -128,13 +128,13 @@ module "peering" {
 #   tags                = var.spoke_tags
 # }
 
-# # Create EID groups. Use if SPN is allowed to create EID groups.
-# module "aks_eid_groups" {
-#   source = "./modules/EID_groups"
+# Create EID groups. Use if SPN is allowed to create EID groups.
+module "aks_eid_groups" {
+  source = "./modules/EID_groups"
 
-#   aks_admins_group = var.aks_admins_group
-#   aks_users_group  = var.aks_users_group
-# }
+  aks_admins_group = var.aks_admins_group
+  aks_users_group  = var.aks_users_group
+}
 
 # # Deploy Public DNS to register application domains hosted in AKS. 
 # # If you are not planning to use the blue green deployment, then you don't need to deploy the public DNS Zone and you can skip this leaving empty the variable public_domain.
