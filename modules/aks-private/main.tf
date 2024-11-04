@@ -101,6 +101,8 @@ resource "azurerm_kubernetes_cluster" "akscluster" {
   }
 }
 
+# not finished
+
 # resource "azurerm_kubernetes_cluster_node_pool" "aks_cluster_userpool" {
 #   for_each              = var.node_pool_config
 #   name                  = each.value.name

@@ -26,12 +26,6 @@
 #   ]
 # }
 
-# resource "azurerm_role_assignment" "role_monitoring_data_reader_me" {
-#   scope                = azurerm_monitor_workspace.prometheus.id
-#   role_definition_name = "Monitoring Data Reader"
-#   principal_id         = data.azurerm_client_config.current.object_id
-# }
-
 # resource "azurerm_dashboard_grafana" "aks_grafana" {
 #   name                              = "${var.aks_appname}-grafana"
 #   resource_group_name               = azurerm_resource_group.monitoring_rg.name
@@ -58,20 +52,21 @@
 #   principal_id         = data.azurerm_client_config.current.object_id
 # }
 
-# resource "azurerm_role_assignment" "role_monitoring_data_reader" {
-#   scope                = azurerm_monitor_workspace.prometheus.id
-#   role_definition_name = "Monitoring Data Reader"
-#   principal_id         = azurerm_dashboard_grafana.grafana.identity.0.principal_id
+# resource "azurerm_role_assignment" "aks_readerrole" {
+#   scope              = azurerm_monitor_workspace.aks_amw.id
+#   role_definition_id = "/subscriptions/${data.azurerm_client_config.current.subscription_id}/providers/Microsoft.Authorization/roleDefinitions/b0d8363b-8ddd-447d-831f-62ca05bff136"
+#   principal_id       = azurerm_dashboard_grafana.aks_grafana.identity.0.principal_id
+#   depends_on = [
+#     azurerm_monitor_workspace.aks_amw,
+#     azurerm_dashboard_grafana.aks_grafana
+#   ]
 # }
-
-# data "azurerm_subscription" "current" {}
 
 # resource "azurerm_role_assignment" "role_monitoring_reader" {
 #   scope                = data.azurerm_subscription.current.id
 #   role_definition_name = "Monitoring Reader"
 #   principal_id         = azurerm_dashboard_grafana.grafana.identity.0.principal_id
 # }
-
 
 # resource "azurerm_monitor_data_collection_endpoint" "aks_dce" {
 #   name                = "${var.aks_appname}-dce"
@@ -162,49 +157,68 @@
 #   }
 # }
 
-# resource "azurerm_role_assignment" "aks_readerrole" {
-#   scope              = azurerm_monitor_workspace.aks_amw.id
-#   role_definition_id = "/subscriptions/${data.azurerm_client_config.current.subscription_id}/providers/Microsoft.Authorization/roleDefinitions/b0d8363b-8ddd-447d-831f-62ca05bff136"
-#   principal_id       = azurerm_dashboard_grafana.aks_grafana.identity.0.principal_id
-#   depends_on = [
-#     azurerm_monitor_workspace.aks_amw,
-#     azurerm_dashboard_grafana.aks_grafana
-#   ]
-# }
+module "aks-monitoring" {
+  source = "./modules/aks-monitoring"
 
-# module "eid_role_assignment-grafanaviewers" {
-#   source = "./modules/EID_role_assignment"
+  resource_group_name = module.spoke_networking.spoke_rg_name
+  location            = module.spoke_networking.spoke_rg_location
+  tags                = var.spoke_tags
+  amw_name            = "${var.aks_appname}-amw"
+  grafana_name        = "${var.aks_appname}-grafana"
+  dce_name            = "${var.aks_appname}-dce"
+  prometheus_dcr_name = "MSProm-${module.aks-monitoring.location}-${var.aks_appname}"
+  ci_dcr_name         = "MSCI-${module.aks-monitoring.location}-${var.aks_appname}"
+  workspace_id        = module.laws.log_analytics_workspace_id
 
-#   role_definition_name = "Grafana Viewer"
-#   scope                = azurerm_dashboard_grafana.aks_grafana.id
-#   eid_group_ids = [
-#     module.aks_eid_groups.aksadmins_object_id
-#   ]
-#   depends_on = [
-#     azurerm_dashboard_grafana.aks_grafana
-#   ]
-# }
+  depends_on = [
+    module.aks
+  ]
+}
 
-# resource "azurerm_monitor_data_collection_rule_association" "aks_amwdcra" {
-#   for_each                = { for k, v in module.aks : k => v }
-#   name                    = "MSProm-${azurerm_resource_group.monitoring_rg.location}-${var.aks_appname}"
-#   target_resource_id      = each.value.aks_id
-#   data_collection_rule_id = azurerm_monitor_data_collection_rule.aks_promdcr.id
-#   depends_on = [
-#     azurerm_monitor_data_collection_rule.aks_promdcr,
-#     module.aks
-#   ]
-# }
+module "eid_role_assignment-grafana_admin" {
+  source = "./modules/EID_role_assignment"
 
-# resource "azurerm_monitor_data_collection_rule_association" "aks_cidcra" {
-#   for_each = { for k, v in module.aks : k => v }
-#   #   name                    = "ContainerInsightsExtension"
-#   name                    = "MSCi-${azurerm_resource_group.monitoring_rg.location}-${var.aks_appname}"
-#   target_resource_id      = each.value.aks_id
-#   data_collection_rule_id = azurerm_monitor_data_collection_rule.aks_cidcr.id
-#   depends_on = [
-#     azurerm_monitor_data_collection_rule.aks_cidcr,
-#     module.aks
-#   ]
+  role_definition_name = "Grafana Admin"
+  scope                = module.aks-monitoring.grafana_id
+  eid_group_ids = [
+    module.aks_eid_groups.aksadmins_object_id
+  ]
+  depends_on = [
+    module.aks-monitoring
+  ]
+}
 
-# }
+module "eid_role_assignment-grafana_viewer" {
+  source = "./modules/EID_role_assignment"
+
+  role_definition_name = "Grafana Viewer"
+  scope                = module.aks-monitoring.grafana_id
+  eid_group_ids = [
+    module.aks_eid_groups.aksusers_object_id
+  ]
+  depends_on = [
+    module.aks-monitoring
+  ]
+}
+
+resource "azurerm_monitor_data_collection_rule_association" "aks_amwdcra" {
+  for_each                = { for k, v in module.aks : k => v }
+  name                    = "MSProm-${module.aks-monitoring.location}-${var.aks_appname}"
+  target_resource_id      = each.value.aks_id
+  data_collection_rule_id = module.aks-monitoring.promdcr_id
+  depends_on = [
+    module.aks-monitoring,
+    module.aks
+  ]
+}
+
+resource "azurerm_monitor_data_collection_rule_association" "aks_cidcra" {
+  for_each                = { for k, v in module.aks : k => v }
+  name                    = "MSCi-${module.aks-monitoring.location}-${var.aks_appname}"
+  target_resource_id      = each.value.aks_id
+  data_collection_rule_id = module.aks-monitoring.cidcr_id
+  depends_on = [
+    module.aks-monitoring,
+    module.aks
+  ]
+}
