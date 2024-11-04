@@ -20,15 +20,15 @@ resource "azurerm_kubernetes_cluster" "akscluster" {
     gateway_id = var.gateway_id
   }
 
-  # oms_agent {
-  #   log_analytics_workspace_id      = var.la_id
-  #   msi_auth_for_monitoring_enabled = true
-  # }
+  oms_agent {
+    log_analytics_workspace_id      = var.la_id
+    msi_auth_for_monitoring_enabled = true
+  }
 
-  # monitor_metrics {
-  #   annotations_allowed = null
-  #   labels_allowed      = null
-  # }
+  monitor_metrics {
+    annotations_allowed = null
+    labels_allowed      = null
+  }
 
   maintenance_window_auto_upgrade {
     frequency   = var.maintenance_window["frequency"]

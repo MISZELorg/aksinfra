@@ -15,7 +15,7 @@ variable "mi_aks_cp_id" {}
 
 # variable "mi_aks_kubelet_id" {}
 
-# variable "la_id" {}
+variable "la_id" {}
 
 variable "gateway_name" {}
 
