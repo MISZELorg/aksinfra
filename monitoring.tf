@@ -165,7 +165,7 @@ resource "azurerm_monitor_data_collection_rule_association" "aks_amwdcra" {
   data_collection_rule_id = azurerm_monitor_data_collection_rule.aks_promdcr.id
   depends_on = [
     azurerm_monitor_data_collection_rule.aks_promdcr,
-    azurerm_kubernetes_cluster.aks_cluster
+    module.aks
   ]
 }
 
@@ -176,7 +176,8 @@ resource "azurerm_monitor_data_collection_rule_association" "aks_cidcra" {
   target_resource_id      = each.value.aks_id
   data_collection_rule_id = azurerm_monitor_data_collection_rule.aks_cidcr.id
   depends_on = [
-    azurerm_monitor_data_collection_rule.aks_cidcr
+    azurerm_monitor_data_collection_rule.aks_cidcr,
+    module.aks
   ]
 
 }
