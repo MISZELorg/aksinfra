@@ -54,7 +54,7 @@ resource "azurerm_monitor_data_collection_endpoint" "aks_dce" {
 }
 
 resource "azurerm_monitor_data_collection_rule" "aks_promdcr" {
-  name                        = "MSProm-${azurerm_resource_group.aks-monitoring_rg.location}-${var.aks_appname}"
+  name                        = "MSProm-${azurerm_resource_group.monitoring_rg.location}-${var.aks_appname}"
   resource_group_name         = azurerm_resource_group.monitoring_rg.name
   location                    = azurerm_resource_group.monitoring_rg.location
   data_collection_endpoint_id = azurerm_monitor_data_collection_endpoint.aks_dce.id
@@ -85,7 +85,7 @@ resource "azurerm_monitor_data_collection_rule" "aks_promdcr" {
 }
 
 resource "azurerm_monitor_data_collection_rule" "aks_cidcr" {
-  name                = "MSCI-${azurerm_resource_group.aks-monitoring_rg.location}-${var.aks_appname}"
+  name                = "MSCI-${azurerm_resource_group.monitoring_rg.location}-${var.aks_appname}"
   resource_group_name = azurerm_resource_group.monitoring_rg.name
   location            = azurerm_resource_group.monitoring_rg.location
   tags                = var.spoke_tags
