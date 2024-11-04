@@ -1,5 +1,7 @@
 data "azurerm_client_config" "current" {}
 
+data "azurerm_subscription" "current" {}
+
 data "terraform_remote_state" "hub-vnet_tfstate" {
   backend = "azurerm"
 

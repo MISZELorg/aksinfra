@@ -48,10 +48,3 @@
 #   target_resource_id      = azurerm_kubernetes_cluster.aks.id
 #   data_collection_rule_id = azurerm_monitor_data_collection_rule.dcr-log-analytics.id
 # }
-
-# # DCR creation should be started about 60 seconds after the Log Analytics workspace is created
-# # This is a workaround, could be fixed in the future
-# resource "time_sleep" "wait_60_seconds" {
-#   create_duration = "60s"
-#   depends_on      = [azurerm_log_analytics_workspace.workspace]
-# }
