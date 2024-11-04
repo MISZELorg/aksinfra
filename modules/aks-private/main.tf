@@ -20,6 +20,10 @@ resource "azurerm_kubernetes_cluster" "akscluster" {
     gateway_id = var.gateway_id
   }
 
+  workload_autoscaler_profile {
+    keda_enabled = true
+  }
+
   oms_agent {
     log_analytics_workspace_id      = var.la_id
     msi_auth_for_monitoring_enabled = true
@@ -51,12 +55,13 @@ resource "azurerm_kubernetes_cluster" "akscluster" {
   }
 
   default_node_pool {
-    name            = "defaultpool"
-    vm_size         = "Standard_DS2_v2"
-    os_disk_size_gb = 30
-    type            = "VirtualMachineScaleSets"
-    node_count      = 3
-    vnet_subnet_id  = var.vnet_subnet_id
+    name                 = "defaultpool"
+    vm_size              = "Standard_DS2_v2"
+    os_disk_size_gb      = 30
+    type                 = "VirtualMachineScaleSets"
+    node_count           = 3
+    vnet_subnet_id       = var.vnet_subnet_id
+    auto_scaling_enabled = true
 
     upgrade_settings {
       drain_timeout_in_minutes      = 0
