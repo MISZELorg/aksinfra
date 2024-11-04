@@ -15,7 +15,7 @@ variable "mi_aks_cp_id" {}
 
 # variable "mi_aks_kubelet_id" {}
 
-variable "la_id" {}
+# variable "la_id" {}
 
 variable "gateway_name" {}
 
@@ -40,4 +40,9 @@ variable "tags" {
   description = "Tags to apply to the resources."
   type        = map(string)
   default     = {}
+}
+
+variable "maintenance_window" {
+  description = "Map of maintenance window configuration"
+  type        = map(string)
 }

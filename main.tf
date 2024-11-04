@@ -149,19 +149,19 @@ module "aks_eid_groups" {
 #   ]
 # }
 
-module "laws" {
-  source = "./modules/laws"
+# module "laws" {
+#   source = "./modules/laws"
 
-  workspace_name      = "${var.aks_appname}-laws"
-  resource_group_name = module.spoke_networking.spoke_rg_name
-  location            = module.spoke_networking.spoke_rg_location
-  sku                 = "PerGB2018"
-  tags                = var.spoke_tags
-  retention_in_days   = 30
-  depends_on = [
-    module.spoke_networking
-  ]
-}
+#   workspace_name      = "${var.aks_appname}-laws"
+#   resource_group_name = module.spoke_networking.spoke_rg_name
+#   location            = module.spoke_networking.spoke_rg_location
+#   sku                 = "PerGB2018"
+#   tags                = var.spoke_tags
+#   retention_in_days   = 30
+#   depends_on = [
+#     module.spoke_networking
+#   ]
+# }
 
 # # MSI for Kubernetes Cluster (Control Plane)
 # # This ID is used by the AKS control plane to create or act on other resources in Azure.
@@ -265,18 +265,19 @@ module "aks" {
   for_each               = { for aks_clusters in local.aks_clusters : aks_clusters.name_prefix => aks_clusters if aks_clusters.aks_turn_on == true }
   resource_group_name    = module.spoke_networking.spoke_rg_name
   admin_group_object_ids = module.aks_eid_groups.aksadmins_object_id
+  maintenance_window     = var.maintenance_window
   location               = module.spoke_networking.spoke_rg_location
   prefix                 = "${var.aks_appname}-${each.value.name_prefix}"
   vnet_subnet_id         = module.spoke_networking.subnet_ids["akssubnet"]
   mi_aks_cp_id           = module.uami_aks_cp[each.value.name_prefix].id
-  la_id                  = module.laws.log_analytics_workspace_id
-  gateway_name           = module.appgw[each.key].gateway_name
-  gateway_id             = module.appgw[each.key].gateway_id
-  private_dns_zone_id    = module.aks_dns_zone.dns_zone_id
-  network_plugin         = try(var.network_plugin, "azure")
-  pod_cidr               = try(var.pod_cidr, null)
-  k8s_version            = each.value.k8s_version
-  tags                   = var.spoke_tags
+  #   la_id                  = module.laws.log_analytics_workspace_id
+  gateway_name        = module.appgw[each.key].gateway_name
+  gateway_id          = module.appgw[each.key].gateway_id
+  private_dns_zone_id = module.aks_dns_zone.dns_zone_id
+  network_plugin      = try(var.network_plugin, "azure")
+  pod_cidr            = try(var.pod_cidr, null)
+  k8s_version         = each.value.k8s_version
+  tags                = var.spoke_tags
 
   depends_on = [
     module.role_assignment_aks-to-vnet,
