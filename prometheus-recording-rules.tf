@@ -4,7 +4,7 @@ resource "azurerm_monitor_alert_prometheus_rule_group" "recording-rules-nodes" {
   name                = "recording-rules-nodes"
   resource_group_name = azurerm_resource_group.monitoring_rg.name
   location            = azurerm_resource_group.monitoring_rg.location
-  cluster_name        = each.value.aks_name
+  cluster_name        = "prvaks-blue"
   rule_group_enabled  = true
   interval            = "PT1M"
   scopes              = [azurerm_monitor_workspace.aks_amw.id]
@@ -82,7 +82,7 @@ resource "azurerm_monitor_alert_prometheus_rule_group" "recording-rules-k8s" {
   name                = "recording-rules-k8s"
   resource_group_name = azurerm_resource_group.monitoring_rg.name
   location            = azurerm_resource_group.monitoring_rg.location
-  cluster_name        = each.value.aks_name
+  cluster_name        = "prvaks-blue"
   rule_group_enabled  = true
   interval            = "PT1M"
   scopes              = [azurerm_monitor_workspace.aks_amw.id]
