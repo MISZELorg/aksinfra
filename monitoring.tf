@@ -26,6 +26,12 @@
 #   ]
 # }
 
+# resource "azurerm_role_assignment" "role_monitoring_data_reader_me" {
+#   scope                = azurerm_monitor_workspace.prometheus.id
+#   role_definition_name = "Monitoring Data Reader"
+#   principal_id         = data.azurerm_client_config.current.object_id
+# }
+
 # resource "azurerm_dashboard_grafana" "aks_grafana" {
 #   name                              = "${var.aks_appname}-grafana"
 #   resource_group_name               = azurerm_resource_group.monitoring_rg.name
@@ -45,6 +51,27 @@
 #     azurerm_monitor_workspace.aks_amw
 #   ]
 # }
+
+# resource "azurerm_role_assignment" "role_grafana_admin" {
+#   scope                = azurerm_dashboard_grafana.grafana.id
+#   role_definition_name = "Grafana Admin"
+#   principal_id         = data.azurerm_client_config.current.object_id
+# }
+
+# resource "azurerm_role_assignment" "role_monitoring_data_reader" {
+#   scope                = azurerm_monitor_workspace.prometheus.id
+#   role_definition_name = "Monitoring Data Reader"
+#   principal_id         = azurerm_dashboard_grafana.grafana.identity.0.principal_id
+# }
+
+# data "azurerm_subscription" "current" {}
+
+# resource "azurerm_role_assignment" "role_monitoring_reader" {
+#   scope                = data.azurerm_subscription.current.id
+#   role_definition_name = "Monitoring Reader"
+#   principal_id         = azurerm_dashboard_grafana.grafana.identity.0.principal_id
+# }
+
 
 # resource "azurerm_monitor_data_collection_endpoint" "aks_dce" {
 #   name                = "${var.aks_appname}-dce"
