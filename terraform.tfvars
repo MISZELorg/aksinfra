@@ -18,6 +18,16 @@ spoke_tags = {
   # Purpose     = "spoke"
 }
 
+maintenance_window = {
+  frequency   = "Weekly"
+  duration    = "4"
+  interval    = "1"
+  day_of_week = "Sunday"
+  start_time  = "00:00"
+  start_date  = "2024-10-22T00:00:00Z"
+  utc_offset  = "+00:00"
+}
+
 hub_state_sa_name        = "aztfconnectivity63"
 hub_state_container_name = "terraform"
 hub_state_sub_id         = "2745b794-365d-4993-9eec-fe3f9879434b"

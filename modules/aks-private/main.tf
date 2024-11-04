@@ -1,10 +1,14 @@
 # Creates cluster with default linux node pool
 
 resource "azurerm_kubernetes_cluster" "akscluster" {
-  name                                = var.prefix
-  dns_prefix                          = var.prefix
-  location                            = var.location
-  resource_group_name                 = var.resource_group_name
+  name                = var.prefix
+  dns_prefix          = var.prefix
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  # node_resource_group          = "${var.prefix}-${var.location}-node-rg"
+  automatic_upgrade_channel           = "patch"
+  image_cleaner_enabled               = true
+  image_cleaner_interval_hours        = 168
   kubernetes_version                  = var.k8s_version
   private_cluster_enabled             = true
   private_dns_zone_id                 = var.private_dns_zone_id
@@ -16,9 +20,34 @@ resource "azurerm_kubernetes_cluster" "akscluster" {
     gateway_id = var.gateway_id
   }
 
-  oms_agent {
-    log_analytics_workspace_id      = var.la_id
-    msi_auth_for_monitoring_enabled = true
+  # oms_agent {
+  #   log_analytics_workspace_id      = var.la_id
+  #   msi_auth_for_monitoring_enabled = true
+  # }
+
+  # monitor_metrics {
+  #   annotations_allowed = null
+  #   labels_allowed      = null
+  # }
+
+  maintenance_window_auto_upgrade {
+    frequency   = var.maintenance_window["frequency"]
+    duration    = tonumber(var.maintenance_window["duration"])
+    interval    = tonumber(var.maintenance_window["interval"])
+    day_of_week = var.maintenance_window["day_of_week"]
+    start_time  = var.maintenance_window["start_time"]
+    start_date  = var.maintenance_window["start_date"]
+    utc_offset  = var.maintenance_window["utc_offset"]
+  }
+
+  maintenance_window_node_os {
+    frequency   = var.maintenance_window["frequency"]
+    duration    = tonumber(var.maintenance_window["duration"])
+    interval    = tonumber(var.maintenance_window["interval"])
+    day_of_week = var.maintenance_window["day_of_week"]
+    start_time  = var.maintenance_window["start_time"]
+    start_date  = var.maintenance_window["start_date"]
+    utc_offset  = var.maintenance_window["utc_offset"]
   }
 
   default_node_pool {
@@ -71,3 +100,23 @@ resource "azurerm_kubernetes_cluster" "akscluster" {
     ]
   }
 }
+
+# resource "azurerm_kubernetes_cluster_node_pool" "aks_cluster_userpool" {
+#   for_each              = var.node_pool_config
+#   name                  = each.value.name
+#   kubernetes_cluster_id = azurerm_kubernetes_cluster.aks_cluster.id
+#   vm_size               = each.value.vm_size
+#   vnet_subnet_id        = azurerm_subnet.aks_subnet.id
+#   auto_scaling_enabled  = each.value.auto_scaling_enabled
+#   zones                 = each.value.zones
+#   node_count            = each.value.node_count
+#   min_count             = each.value.min_count
+#   max_count             = each.value.max_count
+#   max_pods              = each.value.max_pods
+#   mode                  = each.value.mode
+#   tags                  = var.aks_tags
+#   depends_on = [
+#     azurerm_resource_group.aks_rg,
+#     azurerm_kubernetes_cluster.aks_cluster
+#   ]
+# }
