@@ -160,7 +160,7 @@
 module "aks-monitoring" {
   source = "./modules/aks-monitoring"
 
-  resource_group_name = module.spoke_networking.spoke_rg_name
+  resource_group_name = "${var.aks_appname}-monitoring-rg"
   location            = module.spoke_networking.spoke_rg_location
   tags                = var.spoke_tags
   amw_name            = "${var.aks_appname}-amw"
