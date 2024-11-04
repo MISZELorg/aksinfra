@@ -2,6 +2,10 @@ output "aks_id" {
   value = azurerm_kubernetes_cluster.akscluster.id
 }
 
+output "aks_name" {
+  value = azurerm_kubernetes_cluster.akscluster.name
+}
+
 output "node_pool_rg" {
   value = azurerm_kubernetes_cluster.akscluster.node_resource_group
 }

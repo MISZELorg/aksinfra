@@ -95,8 +95,8 @@
 
 # resource "azurerm_monitor_alert_prometheus_rule_group" "kubernetes_recording_rules_rule_group" {
 #   name                = "KubernetesRecordingRulesRuleGroup-${var.aks_appname}"
-#   location            = azurerm_resource_group.aks-monitoring_rg.location
-#   resource_group_name = azurerm_resource_group.aks-monitoring_rg.name
+#   location            = azurerm_resource_group.monitoring_rg.location
+#   resource_group_name = azurerm_resource_group.monitoring_rg.name
 #   scopes              = [azurerm_monitor_workspace.aks_amw.id, each.value.module.aks_id]
 #   cluster_name        = var.aks_appname
 #   description         = "Kubernetes Recording Rules Rule Group"
@@ -257,8 +257,8 @@
 
 # resource "azurerm_monitor_alert_prometheus_rule_group" "node_and_kubernetes_recording_rules_rule_group_win" {
 #   name                = "NodeAndKubernetesRecordingRulesRuleGroup-Win-${var.aks_appname}"
-#   location            = azurerm_resource_group.aks-monitoring_rg.location
-#   resource_group_name = azurerm_resource_group.aks-monitoring_rg.name
+#   location            = azurerm_resource_group.monitoring_rg.location
+#   resource_group_name = azurerm_resource_group.monitoring_rg.name
 #   scopes              = [azurerm_monitor_workspace.aks_amw.id, each.value.module.aks_id]
 #   cluster_name        = var.aks_appname
 #   description         = "Node and Kubernetes Recording Rules Rule Group for Windows Nodes"
@@ -393,8 +393,8 @@
 
 # resource "azurerm_monitor_alert_prometheus_rule_group" "node_recording_rules_rule_group_win" {
 #   name                = "NodeRecordingRulesRuleGroup-Win-${var.aks_appname}"
-#   location            = azurerm_resource_group.aks-monitoring_rg.location
-#   resource_group_name = azurerm_resource_group.aks-monitoring_rg.name
+#   location            = azurerm_resource_group.monitoring_rg.location
+#   resource_group_name = azurerm_resource_group.monitoring_rg.name
 #   scopes              = [azurerm_monitor_workspace.aks_amw.id, each.value.module.aks_id]
 #   cluster_name        = var.aks_appname
 #   description         = "Node and Kubernetes Recording Rules Rule Group for Windows Nodes"
