@@ -102,15 +102,7 @@ resource "azurerm_monitor_data_collection_rule" "aks_cidcr" {
   }
 
   data_flow {
-    streams = concat(var.streams, [
-      "Microsoft-KubeNodeInventory",
-      "Microsoft-KubePVInventory",
-      "Microsoft-KubeServices",
-      "Microsoft-InsightsMetrics",
-      "Microsoft-ContainerInventory",
-      "Microsoft-ContainerNodeInventory",
-      "Microsoft-Perf"
-    ])
+    streams      = var.streams
     destinations = ["ciworkspace"]
   }
 
@@ -128,25 +120,13 @@ resource "azurerm_monitor_data_collection_rule" "aks_cidcr" {
     }
 
     extension {
-      streams = concat(var.streams, [
-        "Microsoft-KubeNodeInventory",
-        "Microsoft-KubePVInventory",
-        "Microsoft-KubeServices",
-        "Microsoft-InsightsMetrics",
-        "Microsoft-ContainerInventory",
-        "Microsoft-ContainerNodeInventory",
-        "Microsoft-Perf"
-      ])
+      streams        = var.streams
       extension_name = "ContainerInsights"
       extension_json = jsonencode({
         "dataCollectionSettings" : {
           "interval" : var.data_collection_interval,
           "namespaceFilteringMode" : var.namespace_filtering_mode_for_data_collection,
-          "namespaces" : [
-            "kube-system",
-            "gatekeeper-system",
-            "azure-arc"
-          ],
+          "namespaces" : var.namespaces_for_data_collection
           "enableContainerLogV2" : var.enableContainerLogV2
         }
       })
@@ -154,7 +134,6 @@ resource "azurerm_monitor_data_collection_rule" "aks_cidcr" {
     }
   }
 }
-
 
 resource "azurerm_role_assignment" "aks_readerrole" {
   scope              = azurerm_monitor_workspace.aks_amw.id
