@@ -36,3 +36,31 @@
 # output "kv_private_zone_name" {
 #   value = azurerm_private_dns_zone.kv-dns.name
 # }
+
+# # DNS Zone name to map A records. This is empty if the public DNS Zone is not deployed.
+# output "public_dns_zone_apps_name" {
+#   value = one(azurerm_dns_zone.public-dns-apps[*].name)
+# }
+
+# # DNS Zone ID to reference in other terraform state and/or resources/modules. This is empty if the public DNS Zone is not deployed.
+# output "public_dns_zone_apps_id" {
+#   value = one(azurerm_dns_zone.public-dns-apps[*].id)
+# }
+
+# output "aks_private_zone_id" {
+#   value = azurerm_private_dns_zone.aks-dns.id
+# }
+# output "aks_private_zone_name" {
+#   value = azurerm_private_dns_zone.aks-dns.name
+# }
+
+# # Outputs
+# output "aad_pod_identity_resource_id" {
+#   value       = azurerm_user_assigned_identity.aks_pod_identity.id
+#   description = "Resource ID for the Managed Identity for Microsoft Entra Pod Identity"
+# }
+
+# output "aad_pod_identity_client_id" {
+#   value       = azurerm_user_assigned_identity.aks_pod_identity.client_id
+#   description = "Client ID for the Managed Identity for Microsoft Entra Pod Identity"
+# }

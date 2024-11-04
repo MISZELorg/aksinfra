@@ -1,3 +1,5 @@
+data "azurerm_client_config" "current" {}
+
 data "terraform_remote_state" "hub-vnet_tfstate" {
   backend = "azurerm"
 
@@ -10,3 +12,8 @@ data "terraform_remote_state" "hub-vnet_tfstate" {
     use_oidc             = true
   }
 }
+
+# Use when refering to existing EID group in AKS 
+# data "azuread_group" "k8s_admins" {
+#   display_name = "k8s_admins"
+# }

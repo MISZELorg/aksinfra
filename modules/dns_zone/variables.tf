@@ -17,3 +17,9 @@ variable "virtual_network_id" {
   description = "ID of the virtual network to link to the DNS zone"
   type        = string
 }
+
+variable "tags" {
+  description = "A map of tags to assign to the resource"
+  type        = map(string)
+  default     = {}
+}

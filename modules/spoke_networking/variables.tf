@@ -15,7 +15,7 @@ variable "location" {
   type        = string
 }
 
-variable "spoke_tags" {
+variable "tags" {
   description = "Tags to apply to the resources."
   type        = map(string)
   default     = {}

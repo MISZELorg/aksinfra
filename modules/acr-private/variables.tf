@@ -1,10 +1,12 @@
-variable "location" {}
+variable "acrname" {}
 
 variable "resource_group_name" {}
 
-variable "nsg_name" {}
+variable "location" {}
 
-variable "appgw_subnet_id" {}
+variable "aks_sub_id" {}
+
+variable "private_zone_id" {}
 
 variable "tags" {
   description = "Tags to apply to the resources."

@@ -2,6 +2,7 @@ resource "azurerm_network_security_group" "appgw-nsg" {
   name                = var.nsg_name
   resource_group_name = var.resource_group_name
   location            = var.location
+  tags                = var.tags
 }
 
 resource "azurerm_network_security_rule" "inboundhttps" {
@@ -64,7 +65,6 @@ resource "azurerm_network_security_rule" "DenyAllInBound" {
 }
 
 resource "azurerm_subnet_network_security_group_association" "appgwassoc" {
-  #   subnet_id                 = azurerm_subnet.appgw.id
   subnet_id                 = var.appgw_subnet_id
   network_security_group_id = azurerm_network_security_group.appgw-nsg.id
 }

@@ -1,6 +1,9 @@
-location        = "northeurope"
-spoke_prefix    = "aztf-spoke"
-spoke_vnet_cidr = ["10.1.0.0/16"]
+location         = "northeurope"
+spoke_prefix     = "aztf-spoke"
+spoke_vnet_cidr  = ["10.1.0.0/16"]
+aks_appname      = "prvaks"
+aks_admins_group = "AKS Admins Team"
+aks_users_group  = "AKS Devs Team"
 
 subnets = {
   "akssubnet"   = { address_prefix = "10.1.16.0/20" }
@@ -11,8 +14,8 @@ spoke_tags = {
   Environment = "Dev"
   Owner       = "kmiszel"
   Source      = "Terraform"
-  Git         = "Github"
-  Purpose     = "spoke"
+  # Git         = "Github"
+  # Purpose     = "spoke"
 }
 
 hub_state_sa_name        = "aztfconnectivity63"
