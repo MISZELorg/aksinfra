@@ -63,3 +63,14 @@ resource "azurerm_monitor_data_collection_rule_association" "aks_cidcra" {
     module.aks
   ]
 }
+
+resource "kubernetes_config_map" "prometheus_recording_rules" {
+  metadata {
+    name      = "prometheus-recording-rules"
+    namespace = "monitoring"
+  }
+
+  data = {
+    "recording_rules.yml" = file("${path.module}/recording_rules.yml")
+  }
+}
