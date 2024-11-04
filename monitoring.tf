@@ -90,7 +90,7 @@ resource "azurerm_monitor_data_collection_rule" "aks_cidcr" {
   location            = azurerm_resource_group.monitoring_rg.location
   tags                = var.spoke_tags
   depends_on = [
-    module.aks
+    azurerm_log_analytics_workspace.laws
   ]
 
   destinations {
