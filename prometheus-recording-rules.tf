@@ -7,6 +7,7 @@ resource "azurerm_monitor_alert_prometheus_rule_group" "recording-rules-nodes" {
   rule_group_enabled  = true
   interval            = "PT1M"
   scopes              = [module.aks-monitoring.amw_id]
+  tags                = var.spoke_tags
 
   rule {
     record     = "instance:node_num_cpu:sum"
@@ -84,6 +85,7 @@ resource "azurerm_monitor_alert_prometheus_rule_group" "recording-rules-k8s" {
   rule_group_enabled  = true
   interval            = "PT1M"
   scopes              = [module.aks-monitoring.amw_id]
+  tags                = var.spoke_tags
 
   rule {
     record     = "node_namespace_pod_container:container_cpu_usage_seconds_total:sum_irate"
