@@ -25,10 +25,10 @@ resource "azurerm_kubernetes_cluster" "akscluster" {
   #   msi_auth_for_monitoring_enabled = true
   # }
 
-  monitor_metrics {
-    annotations_allowed = null
-    labels_allowed      = null
-  }
+  # monitor_metrics {
+  #   annotations_allowed = null
+  #   labels_allowed      = null
+  # }
 
   maintenance_window_auto_upgrade {
     frequency   = var.maintenance_window["frequency"]
