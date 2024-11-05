@@ -63,9 +63,9 @@ resource "azurerm_kubernetes_cluster" "akscluster" {
     vnet_subnet_id              = var.vnet_subnet_id
     max_pods                    = 30
     node_count                  = 2
-    min_count                   = 2
-    max_count                   = 3
-    auto_scaling_enabled        = true
+    min_count                   = null
+    max_count                   = null
+    auto_scaling_enabled        = false
 
     upgrade_settings {
       drain_timeout_in_minutes      = 0
