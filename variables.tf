@@ -88,3 +88,7 @@ variable "network_plugin" {
 variable "pod_cidr" {
   default = null
 }
+
+# variable "flux_key" {
+#   default = null
+# }
