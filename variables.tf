@@ -88,3 +88,12 @@ variable "network_plugin" {
 variable "pod_cidr" {
   default = null
 }
+
+variable "github_repo" {
+  type = string
+}
+
+variable "ssh_private_key" {
+  type        = string
+  description = "The SSH private key used for accessing the GitHub repository"
+}
