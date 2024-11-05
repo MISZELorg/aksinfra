@@ -76,13 +76,13 @@ resource "azurerm_monitor_data_collection_rule" "aks_promdcr" {
   destinations {
     monitor_account {
       monitor_account_id = azurerm_monitor_workspace.aks_amw.id
-      name               = "MonitoringAccount1"
+      name               = azurerm_monitor_workspace.aks_amw.name
     }
   }
 
   data_flow {
     streams      = ["Microsoft-PrometheusMetrics"]
-    destinations = ["MonitoringAccount1"]
+    destinations = [azurerm_monitor_workspace.aks_amw.name]
   }
 
   data_sources {
@@ -93,6 +93,53 @@ resource "azurerm_monitor_data_collection_rule" "aks_promdcr" {
   }
 }
 
+# resource "azurerm_monitor_data_collection_rule" "aks_cidcr" {
+#   name                = var.ci_dcr_name
+#   resource_group_name = azurerm_resource_group.monitoring_rg.name
+#   location            = azurerm_resource_group.monitoring_rg.location
+#   tags                = var.tags
+
+#   destinations {
+#     log_analytics {
+#       workspace_resource_id = var.workspace_id
+#       name                  = "ciworkspace"
+#     }
+#   }
+
+#   data_flow {
+#     streams      = var.streams
+#     destinations = ["ciworkspace"]
+#   }
+
+#   data_flow {
+#     streams      = ["Microsoft-Syslog"]
+#     destinations = ["ciworkspace"]
+#   }
+
+#   data_sources {
+#     syslog {
+#       streams        = ["Microsoft-Syslog"]
+#       facility_names = var.syslog_facilities
+#       log_levels     = var.syslog_levels
+#       name           = "sysLogsDataSource"
+#     }
+
+#     extension {
+#       streams        = var.streams
+#       extension_name = "ContainerInsights"
+#       extension_json = jsonencode({
+#         "dataCollectionSettings" : {
+#           "interval" : var.data_collection_interval,
+#           "namespaceFilteringMode" : var.namespace_filtering_mode_for_data_collection,
+#           "namespaces" : var.namespaces_for_data_collection
+#           "enableContainerLogV2" : var.enableContainerLogV2
+#         }
+#       })
+#       name = "ContainerInsightsExtension"
+#     }
+#   }
+# }
+
 resource "azurerm_monitor_data_collection_rule" "aks_cidcr" {
   name                = var.ci_dcr_name
   resource_group_name = azurerm_resource_group.monitoring_rg.name
@@ -102,40 +149,38 @@ resource "azurerm_monitor_data_collection_rule" "aks_cidcr" {
   destinations {
     log_analytics {
       workspace_resource_id = var.workspace_id
-      name                  = "ciworkspace"
+      name                  = "log-analytics"
     }
   }
 
   data_flow {
-    streams      = var.streams
-    destinations = ["ciworkspace"]
-  }
-
-  data_flow {
-    streams      = ["Microsoft-Syslog"]
-    destinations = ["ciworkspace"]
+    streams      = ["Microsoft-ContainerInsights-Group-Default", "Microsoft-Syslog"]
+    destinations = ["log-analytics"]
   }
 
   data_sources {
     syslog {
+      name           = "syslog-data-source"
       streams        = ["Microsoft-Syslog"]
-      facility_names = var.syslog_facilities
-      log_levels     = var.syslog_levels
-      name           = "sysLogsDataSource"
+      facility_names = ["*"] # ["auth", "authpriv", "cron", "daemon", "mark", "kern", "local0", "local1", "local2",  "local3", "local4", "local5", "local6", "local7", "lpr", "mail", "news", "syslog", "user", "uucp"]
+      log_levels     = ["Debug", "Info", "Notice", "Warning", "Error", "Critical", "Alert", "Emergency", ]
+
     }
 
     extension {
-      streams        = var.streams
       extension_name = "ContainerInsights"
-      extension_json = jsonencode({
-        "dataCollectionSettings" : {
-          "interval" : var.data_collection_interval,
-          "namespaceFilteringMode" : var.namespace_filtering_mode_for_data_collection,
-          "namespaces" : var.namespaces_for_data_collection
-          "enableContainerLogV2" : var.enableContainerLogV2
+      name           = "ContainerInsightsExtension"
+      streams        = ["Microsoft-ContainerInsights-Group-Default"]
+      extension_json = jsonencode(
+        {
+          "dataCollectionSettings" = {
+            "enableContainerLogV2"   = true
+            "interval"               = "1m"
+            "namespaceFilteringMode" = "Include" # "Exclude" "Off"
+            "namespaces"             = ["kube-system", "default"]
+          }
         }
-      })
-      name = "ContainerInsightsExtension"
+      )
     }
   }
 }
