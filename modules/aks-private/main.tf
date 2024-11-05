@@ -5,7 +5,7 @@ resource "azurerm_kubernetes_cluster" "akscluster" {
   dns_prefix          = var.prefix
   location            = var.location
   resource_group_name = var.resource_group_name
-  # node_resource_group          = "${var.prefix}-${var.location}-node-rg"
+  # node_resource_group          = "${var.prefix}-${var.location}-nodes-rg"
   automatic_upgrade_channel           = "patch"
   image_cleaner_enabled               = true
   image_cleaner_interval_hours        = 168
@@ -60,12 +60,12 @@ resource "azurerm_kubernetes_cluster" "akscluster" {
     vm_size                     = "Standard_DS2_v2"
     os_disk_size_gb             = 30
     type                        = "VirtualMachineScaleSets"
-    node_count                  = 2
-    min_count                   = 2
-    max_count                   = 3
-    max_pods                    = 30
     vnet_subnet_id              = var.vnet_subnet_id
-    # auto_scaling_enabled        = true
+    max_pods                    = 30
+    node_count                  = 2
+    min_count                   = null
+    max_count                   = null
+    auto_scaling_enabled        = false
 
     upgrade_settings {
       drain_timeout_in_minutes      = 0
