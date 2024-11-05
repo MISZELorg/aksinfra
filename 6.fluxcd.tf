@@ -1,6 +1,6 @@
 resource "azurerm_kubernetes_cluster_extension" "flux" {
   for_each       = { for k, v in module.aks : k => v }
-  name           = "flux_ext"
+  name           = "flux"
   cluster_id     = each.value.aks_id
   extension_type = "microsoft.flux"
   depends_on = [
