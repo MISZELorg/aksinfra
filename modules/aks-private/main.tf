@@ -20,9 +20,9 @@ resource "azurerm_kubernetes_cluster" "akscluster" {
     gateway_id = var.gateway_id
   }
 
-  workload_autoscaler_profile {
-    keda_enabled = true
-  }
+  # workload_autoscaler_profile {
+  #   keda_enabled = true
+  # }
 
   oms_agent {
     log_analytics_workspace_id      = var.la_id
@@ -65,7 +65,7 @@ resource "azurerm_kubernetes_cluster" "akscluster" {
     max_count                   = 3
     max_pods                    = 30
     vnet_subnet_id              = var.vnet_subnet_id
-    auto_scaling_enabled        = true
+    # auto_scaling_enabled        = true
 
     upgrade_settings {
       drain_timeout_in_minutes      = 0
